@@ -1,0 +1,114 @@
+version: "3"
+services:
+  redis:
+    container_name: redis
+    image: redis:latest
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis:/data
+    ports:
+      - "6379:6379"
+    restart: always
+
+  postgres:
+    container_name: postgres
+    image: postgres:12.4
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    restart: always
+
+  postgres_admin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    volumes:
+      - ./data/pgadmin/servers.json:/pgadmin4/servers.json
+    ports:
+      - "8098:80"
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    links:
+      - postgres
+    restart: always
+
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    volumes:
+      - mongo:/data/db
+    ports:
+      - "27017:27017"
+    restart: always
+
+  zookeeper:
+    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+
+  kafka:
+    container_name: kafka
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 9093:9093
+    environment:
+      KAFKA_BROKER_ID: 1
+      ALLOW_PLAINTEXT_LISTENER: 'yes'
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:29092,OUTSIDE://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_LISTENERS: INSIDE://kafka:29092,OUTSIDE://0.0.0.0:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - kafka:/data/kafka
+
+  internal-gateway-service:
+    image: internal-gateway-service:0.0.1
+    build:
+      context: ./internalGateway
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    depends_on:
+      - kafka
+      - zookeeper
+    links:
+      - kafka
+
+  product-service:
+    image: product-service:0.0.1
+    build:
+      context: ./productService
+      dockerfile: Dockerfile
+    ports:
+      - "4030:4003"
+    depends_on:
+      - internal-gateway-service
+    links:
+      - internal-gateway-service
+      - kafka
+
+volumes:
+  redis:
+    external: true
+  postgres:
+    external: true
+  postgres_admin:
+    external: true
+  mongo:
+    external: true
+  kafka:
+    external: true
