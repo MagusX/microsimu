@@ -15,13 +15,12 @@ import java.text.MessageFormat;
 @Service(value = "ProductServiceImpl")
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
-	private final ProductMapper productMapper;
 	protected final ProductSagaRepository productSagaRepository;
 	protected final ProductRepository productRepository;
 
 	@Override
 	public ProductEntity createProduct(ProductRequestDto productRequestDto) {
-		ProductEntity entity = productMapper.toEntityFromRequestDto(productRequestDto);
+		ProductEntity entity = ProductMapper.toEntityFromRequestDto(productRequestDto);
 		return productRepository.save(entity);
 	}
 
@@ -29,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
 	public ProductEntity updateProduct(ProductRequestDto productRequestDto) {
 		getProductById(productRequestDto.getId());
 
-		ProductEntity updated = productMapper.toEntityFromRequestDto(productRequestDto);
+		ProductEntity updated = ProductMapper.toEntityFromRequestDto(productRequestDto);
 		updated.setId(productRequestDto.getId());
 		return productRepository.save(updated);	}
 

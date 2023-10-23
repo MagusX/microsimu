@@ -3,7 +3,6 @@ package com.microsimu.productService.saga;
 import com.microsimu.productService.dto.request.TakeStockSagaDto;
 import com.microsimu.productService.entity.ProductEntity;
 import com.microsimu.productService.entity.ProductSaga;
-import com.microsimu.productService.mapper.ProductMapper;
 import com.microsimu.productService.repository.ProductRepository;
 import com.microsimu.productService.repository.ProductSagaRepository;
 import com.microsimu.productService.service.impl.ProductServiceImpl;
@@ -17,8 +16,8 @@ import java.util.Map;
 
 @Component(value = "ProductServiceSaga")
 public class ProductServiceSaga extends ProductServiceImpl {
-	public ProductServiceSaga(ProductMapper productMapper, ProductRepository productRepository, ProductSagaRepository productSagaRepository) {
-		super(productMapper, productSagaRepository, productRepository);
+	public ProductServiceSaga(ProductRepository productRepository, ProductSagaRepository productSagaRepository) {
+		super(productSagaRepository, productRepository);
 	}
 
 	@Transactional

@@ -4,7 +4,6 @@ import com.microsimu.productService.dto.request.TakeStockSagaDto;
 import com.microsimu.productService.entity.ProductEntity;
 import com.microsimu.productService.entity.ProductSaga;
 import com.microsimu.productService.mapper.ProductMapper;
-import com.microsimu.productService.mapper.ProductMapperImpl;
 import com.microsimu.productService.repository.ProductRepository;
 import com.microsimu.productService.repository.ProductSagaRepository;
 import com.microsimu.productService.saga.ProductServiceSaga;
@@ -23,8 +22,6 @@ import java.util.*;
 @TestPropertySource(locations = "classpath:application-test.properties")
 @DataJpaTest
 public class ProductServiceSagaTest {
-	private final ProductMapper pojoMapper = new ProductMapperImpl();
-
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -38,7 +35,7 @@ public class ProductServiceSagaTest {
 
 	@BeforeEach
 	void init() {
-		productServiceSaga = new ProductServiceSaga(pojoMapper, productRepository, productSagaRepository);
+		productServiceSaga = new ProductServiceSaga(productRepository, productSagaRepository);
 	}
 
 	@Test

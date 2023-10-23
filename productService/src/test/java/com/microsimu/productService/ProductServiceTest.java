@@ -3,7 +3,6 @@ package com.microsimu.productService;
 import com.microsimu.productService.dto.request.ProductRequestDto;
 import com.microsimu.productService.entity.ProductEntity;
 import com.microsimu.productService.mapper.ProductMapper;
-import com.microsimu.productService.mapper.ProductMapperImpl;
 import com.microsimu.productService.repository.ProductRepository;
 import com.microsimu.productService.repository.ProductSagaRepository;
 import com.microsimu.productService.service.ProductService;
@@ -18,8 +17,6 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(locations = "classpath:application-test.properties")
 @DataJpaTest
 public class ProductServiceTest {
-	private final ProductMapper pojoMapper = new ProductMapperImpl();
-
 	@Autowired
 	private ProductRepository productRepository;
 
@@ -30,7 +27,7 @@ public class ProductServiceTest {
 
 	@BeforeEach
 	void init() {
-		productService = new ProductServiceImpl(pojoMapper, productSagaRepository, productRepository);
+		productService = new ProductServiceImpl(productSagaRepository, productRepository);
 	}
 
 	@Test
