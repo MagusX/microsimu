@@ -6,7 +6,6 @@ import com.microsimu.cartOrderService.dto.request.CreateOrderRequestDto;
 import com.microsimu.cartOrderService.dto.request.OrderRequestDto;
 import com.microsimu.cartOrderService.entity.CartItemEntity;
 import com.microsimu.cartOrderService.entity.OrderEntity;
-import com.microsimu.cartOrderService.mapper.CartItemMapper;
 import com.microsimu.cartOrderService.repository.CartItemRepository;
 import com.microsimu.cartOrderService.repository.OrderRepository;
 import com.microsimu.cartOrderService.service.OrderService;
@@ -22,7 +21,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
-	private final CartItemMapper cartItemMapper;
 	private final OrderRepository orderRepository;
 	private final CartItemRepository cartItemRepository;
 

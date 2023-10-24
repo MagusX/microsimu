@@ -19,7 +19,6 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
-	private final CartItemMapper cartItemMapper;
 	private final CartItemRepository cartItemRepository;
 
 	@Override
@@ -40,7 +39,7 @@ public class CartServiceImpl implements CartService {
 			}
 			productIdSet.add(dto.getProductId());
 			if (dto.getQuantity() > 0) {
-				updatedList.add(cartItemMapper.toEntityFromDto(dto));
+				updatedList.add(CartItemMapper.toEntityFromDto(dto));
 			} else if (dto.getId() != null) {
 				deleteList.add(dto.getId());
 			}
