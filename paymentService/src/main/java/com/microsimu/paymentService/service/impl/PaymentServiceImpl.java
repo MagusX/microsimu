@@ -31,7 +31,6 @@ public class PaymentServiceImpl implements PaymentService {
 	private String topicDeliveryRequestName;
 	@Value("${ktopic.payment-delivery-reply.name}")
 	private String topicPaymentDeliveryReplyName;
-	private final PaymentMapper paymentMapper;
 	private final RequestReplyProducer requestReplyProducer;
 	private final PaymentRepository paymentRepository;
 
@@ -50,7 +49,7 @@ public class PaymentServiceImpl implements PaymentService {
 			throw new RuntimeException(MessageFormat.format(AppMessage.ALREADY_EXISTS, "OrderId: " + requestDto.getOrderId()));
 		}
 
-		PaymentEntity entity = paymentMapper.toEntityFromDto(requestDto);
+		PaymentEntity entity = PaymentMapper.toEntityFromDto(requestDto);
 		entity.setTransactionId(UUID.randomUUID().toString());
 		entity.setTimestamp(LocalDateTime.now());
 
