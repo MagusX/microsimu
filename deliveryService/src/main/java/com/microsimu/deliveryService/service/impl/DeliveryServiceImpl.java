@@ -31,11 +31,10 @@ public class DeliveryServiceImpl implements DeliveryService {
 	@Value("${ktopic.rb-product.name}")
 	private String topicRbProduct;
 	private final KafkaTemplate<String, Object> kafkaTemplate;
-	private final DeliveryMapper deliveryMapper;
 	private final DeliveryRepository deliveryRepository;
 
 	public void createDelivery(DeliveryRequestDto dto) {
-		DeliveryEntity deliveryEntity = deliveryMapper.toEntityFromDto(dto);
+		DeliveryEntity deliveryEntity = DeliveryMapper.toEntityFromDto(dto);
 		deliveryEntity.setStatus(DeliveryStatusConstant.DELIVERY_IN_PROGRESS);
 
 		deliveryRepository.save(deliveryEntity);
