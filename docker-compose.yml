@@ -88,6 +88,19 @@ services:
     links:
       - kafka
 
+  external-gateway-service:
+    image: external-gateway-service:0.0.1
+    build:
+      context: ./externalGateway
+      dockerfile: Dockerfile
+    ports:
+      - "4010:4001"
+    depends_on:
+      - kafka
+      - zookeeper
+    links:
+      - kafka
+
   product-service:
     image: product-service:0.0.1
     build:
@@ -97,9 +110,60 @@ services:
       - "4030:4003"
     depends_on:
       - internal-gateway-service
+      - postgres
     links:
       - internal-gateway-service
       - kafka
+      - postgres
+
+  cart-order-service:
+    image: cart-order-service:0.0.1
+    build:
+      context: ./cartOrderService
+      dockerfile: Dockerfile
+    ports:
+      - "4040:4004"
+    depends_on:
+      - internal-gateway-service
+      - postgres
+      - redis
+    links:
+      - internal-gateway-service
+      - kafka
+      - postgres
+      - redis
+
+  payment-service:
+    image: payment-service:0.0.1
+    build:
+      context: ./paymentService
+      dockerfile: Dockerfile
+    ports:
+      - "4050:4005"
+    depends_on:
+      - internal-gateway-service
+      - mongo
+    links:
+      - internal-gateway-service
+      - kafka
+      - mongo
+
+  delivery-service:
+    image: delivery-service:0.0.1
+    build:
+      context: ./deliveryService
+      dockerfile: Dockerfile
+    ports:
+      - "4060:4006"
+    depends_on:
+      - internal-gateway-service
+      - postgres
+      - redis
+    links:
+      - internal-gateway-service
+      - kafka
+      - postgres
+      - redis
 
 volumes:
   redis:
