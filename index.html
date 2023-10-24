@@ -23,7 +23,7 @@
 	        function connect() {
 	        	var from = document.getElementById('from').value;
 
-				let wsEndpoint = (from == 'admin') ? 'http://localhost:9000/ws' : 'http://localhost:9001/ws';
+				let wsEndpoint = (from == 'admin') ? 'http://localhost:4000/ws' : 'http://localhost:4010/ws';
 				let wsTopic = (from == 'admin') ? '/admin/delivery' : '/customer/order/' + from;
 
 	            var socket = new SockJS(wsEndpoint);
