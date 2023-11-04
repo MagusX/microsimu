@@ -11,12 +11,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/cart-order")
 @RequiredArgsConstructor
 public class CartOrderController {
+	private final RestTemplate restTemplate;
 	private final KafkaMessageService kafkaMessageService;
 
 	@Value("${ktopic.cartorder-request.name}")
@@ -53,5 +57,11 @@ public class CartOrderController {
 	public ResponseEntity<?> cancelOrder(@RequestBody CreateOrderRequestDto dto) {
 		return ResponseBuilder.buildOkResponse(
 				kafkaMessageService.sendBlocking(topicCartOrderRequestName, topicCartOrderReplyName, Action.CANCEL_ORDER, dto));
+	}
+
+	@PostMapping("/test")
+	public ResponseEntity<?> test(@RequestBody Map<String, String> dto) {
+		log.info("HERE>>>: " + dto.get("url"));
+		return ResponseBuilder.buildOkResponse(restTemplate.postForObject(dto.get("url"), dto, Object.class));
 	}
 }
