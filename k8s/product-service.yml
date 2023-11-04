@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-service
+  template:
+    metadata:
+      labels:
+        app: product-service
+    spec:
+      containers:
+        - name: product-service
+          image: briandoan/product-service:1.0.0
+          ports:
+            - containerPort: 4003
+          env:
+            - name: POSTGRESQL_URL
+              value: jdbc:postgresql://postgres:5432/microsimu-product
+            - name: POSTGRESQL_USERNAME
+              value: postgres
+            - name: POSTGRESQL_PWD
+              value: postgres
+            - name: KAFKA_BROKERS
+              value: kafka1:29092,kafka2:29092,kafka3:29092
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+spec:
+  selector:
+    app: product-service
+  ports:
+    - port: 4003
+      targetPort: 4003
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: product-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: product-service
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 80

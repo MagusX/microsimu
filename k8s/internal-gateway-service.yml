@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: internal-gateway-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: internal-gateway-service
+  template:
+    metadata:
+      labels:
+        app: internal-gateway-service
+    spec:
+      containers:
+        - name: internal-gateway-service
+          image: briandoan/internal-gateway-service:1.0.0
+          ports:
+            - containerPort: 4000
+          env:
+            - name: KAFKA_BROKERS
+              value: kafka1:29092,kafka2:29092,kafka3:29092
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: internal-gateway-service
+spec:
+  selector:
+    app: internal-gateway-service
+  ports:
+    - port: 8080
+      targetPort: 4000
+  type: LoadBalancer
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: internal-gateway-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: internal-gateway-service
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 80
